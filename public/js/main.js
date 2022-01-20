@@ -7,14 +7,15 @@ const sendMsg = document.getElementById("msg");
 
 
 (() => {
-	console.log("this things is calling")
 	let userId = localStorage.getItem("userId")
 	let receiverId = localStorage.getItem("receiverId")
 	let userName = localStorage.getItem("userName")
 	let receiverName = JSON.parse(localStorage.getItem("activeUser")).filter(user => user._id === receiverId)[0].user_name
 	socket.userId = localStorage.getItem("userId")
+
+	//first user arrive to chat
 	socket.emit("newUser", { userId: localStorage.getItem("userId"), userName: localStorage.getItem("userName") })
-	console.log("active user list: ", localStorage.getItem("activeUser"))
+	//for getting user all the history with specific user
 	socket.on("history", (data) => {
 		console.log(" all history of msg, ", data)
 
@@ -29,6 +30,12 @@ const sendMsg = document.getElementById("msg");
 		})
 		console.log("history of msg, ", actualHistory)
 	})
+
+	let domUserEle = document.getElementById(receiverId)
+	domUserEle.classList.add('active')
+	// const domUserLabel = document.getElementById("userLabel")
+	// domUserLabel.innerHTML = receiverName
+
 })();
 
 
@@ -69,6 +76,8 @@ socket.on("activeUserList", (data) => {
 	currentUser.forEach(user => {
 		innerText += "<li class='user' onclick='chatWithUser(event)' id=" + user._id + " value=" + user._id + ">" + user.user_name + "</li>"
 	})
+
+
 	domUser.innerHTML = innerText
 })
 
@@ -100,6 +109,13 @@ const chatWithUser = (e) => {
 	localStorage.setItem("receiverId", e.target.id)
 	const userLabel = JSON.parse(localStorage.getItem('activeUser')).filter(user => user._id === e.target.id)[0].user_name
 	const domUserLabel = document.getElementById("userLabel")
+	const domUser = document.getElementById(e.target.id)
+	//remove active class from the others... 
+	const activeClassEle = document.getElementsByClassName("active")
+	for (const item of activeClassEle) {
+		item.classList.remove("active")
+	}
+	domUser.classList.add('active')
 	domUserLabel.innerHTML = userLabel
 }
 
