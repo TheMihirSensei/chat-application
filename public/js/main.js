@@ -39,6 +39,9 @@ const addUserDom = (users) => {
 const chatWithUser = (e) => {
 	localStorage.setItem("receiverId", e.target.id);
 	let userId = localStorage.getItem("userId")
+
+	console.log("target userId", e.target.id)
+	console.log(JSON.parse(localStorage.getItem("activeUser")))
 	const userLabel = JSON.parse(localStorage.getItem("activeUser")).filter(
 		(user) => user._id === e.target.id
 	)[0].user_name;
@@ -54,11 +57,16 @@ const chatWithUser = (e) => {
 
 	//get history of receiver and sender and change the dom according to it. 
 	fetch(`http://localhost:5012/history?senderId=${userId}&receiverId=${e.target.id}`)
-		.then(data => data.json())
+		.then((res) => {
+			if (!res.ok) {
+				throw Error(res.statusText)
+			}
+			return res.json()
+		})
 		.then(res => {
-			if (res.data.length > 0) {
+			if (res.data && res.data?.length > 0) {
 				let receiverId = localStorage.getItem("receiverId")
-				console.log("ohk history data: ", res.data)	
+				console.log("ohk history data: ", res.data)
 				chatContainer.innerHTML = ""
 				res.data.forEach(chat => {
 					let receiverName = JSON?.parse(localStorage.getItem("activeUser"))?.filter(
@@ -76,6 +84,9 @@ const chatWithUser = (e) => {
 				chatContainer.innerHTML = ""
 			}
 
+		})
+		.catch(err => {
+			console.log("come here error: ", err)
 		})
 };
 
@@ -108,6 +119,9 @@ const chatWithUser = (e) => {
 
 				let currentUser = data.data.filter((user) => user._id !== userId);
 				addUserDom(currentUser)
+
+				//setactive user to localStorage
+				localStorage.setItem('activeUser', JSON.stringify(currentUser))
 
 				let receiverName = JSON?.parse(localStorage.getItem("activeUser"))?.filter(
 					(user) => user._id === receiverId
@@ -153,7 +167,7 @@ const chatWithUser = (e) => {
 socket.on("activeUserList", (data) => {
 	//add the active user in local storage and update dom elements
 
-	console.log("data is: ", data);
+
 
 	//userID, userName
 	let userID = localStorage.getItem("userId");
