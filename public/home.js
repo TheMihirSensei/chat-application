@@ -17,7 +17,7 @@ sendButton.addEventListener("click", async (e) => {
 			},
 			body: JSON.stringify({
 				user_name: userName,
-				somedata: "this is real me"
+
 			})
 		})
 		let response = await data.json()

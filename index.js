@@ -23,16 +23,23 @@ app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')))
 io.on("connection", async (socket) => {
 	let history = await chatModel.find().sort({ createdAt: 1 })
-	socket.emit("history", history)
+	let alltheUser = await userModel.find()
+	io.emit("history", history)
+	io.emit("activeUserList", alltheUser)
+	// socket.on("new user", async (data) => {
+	// 	console.log("emmited new user")
+	// 	console.log("data: ", data)
 
-	socket.on("newUser", async (data) => {
-		console.log("emmited new user")
-		console.log("data: ", data)
+	// 	let alltheUser = await userModel.find()
+	// 	io.emit("activeUserList", alltheUser)
+	// })
 
-		let alltheUser = await userModel.find()
-		io.emit("activeUserList", alltheUser)
+
+	socket.on("test", (data) => {
+		console.log("yeah testing worked very well:)))", data)
+
+		io.emit("sen", { me: "get lost" })
 	})
-
 
 	socket.on("new message", async (data) => {
 

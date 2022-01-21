@@ -103,27 +103,32 @@ const chatWithUser = (e) => {
 	let userWith = document.getElementById("userWith")
 	userWith.innerHTML += ` ${userName}`
 
-	socket.emit("newUser", {
-		userId: localStorage.getItem("userId"),
-		userName: localStorage.getItem("userName"),
+	console.log("uaa new year event emitting here", userId, userName)
+	socket.emit("new user", {
+		userId,
+		userName
 	});
-	if (!receiverId) {
-		console.log("did not able to receive:::");
-	} else {
 
-		fetch("http://localhost:5012/users")
-			.then((res) => res.json())
-			.then((data) => {
-				console.log("finally tdata is: ", data);
-				//add active users to local storage
+	socket.emit("test", { data: "this is test test???" }, (test) => {
+		console.log("test ??")
+	})
+	socket.on("sen", (data) => {
+		console.log("testing sen working perfect fine:L ", data)
+	})
+
+	fetch("http://localhost:5012/users")
+		.then((res) => res.json())
+		.then((data) => {
+			//add active users to local storage
+
+			let currentUser = data.data.filter((user) => user._id !== userId);
+			addUserDom(currentUser)
 
 
-				let currentUser = data.data.filter((user) => user._id !== userId);
-				addUserDom(currentUser)
+			//setactive user to localStorage
+			localStorage.setItem('activeUser', JSON.stringify(currentUser))
 
-				//setactive user to localStorage
-				localStorage.setItem('activeUser', JSON.stringify(currentUser))
-
+			if (receiverId) {
 				let receiverName = JSON?.parse(localStorage.getItem("activeUser"))?.filter(
 					(user) => user._id === receiverId
 				)[0].user_name;
@@ -136,7 +141,7 @@ const chatWithUser = (e) => {
 							(chat.senderId === receiverId && chat.receiverId === userId)
 						);
 					});
-
+					chatContainer.innerHTML = ""
 					actualHistory.forEach((chat) => {
 						let name = chat.senderId === userId ? userName : receiverName;
 						let cssClass = chat.senderId === userId ? "right" : "left";
@@ -145,14 +150,17 @@ const chatWithUser = (e) => {
 				});
 				document.getElementById(receiverId).classList.add("active")
 				document.getElementById("userLabel").innerHTML = receiverName;
-			})
-			.catch((err) => {
-				console.log("soemthing went wrong", err);
-			});
+			}
 
 
-		// get all the active User and add to dom element
-	}
+		})
+		.catch((err) => {
+			console.log("soemthing went wrong", err);
+		});
+
+
+	// get all the active User and add to dom element
+
 
 	//get all the active the user and add to the userElement
 
@@ -167,7 +175,7 @@ const chatWithUser = (e) => {
 
 socket.on("activeUserList", (data) => {
 	//add the active user in local storage and update dom elements
-
+	console.log("new User arrive ::::", data)
 
 
 	//userID, userName
