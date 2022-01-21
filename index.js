@@ -3,6 +3,7 @@ const path = require("path")
 const { createServer } = require("http");
 const socket = require("socket.io");
 const mongoose = require("mongoose")
+const cors = require("cors")
 
 
 const app = express();
@@ -16,6 +17,7 @@ const chatModel = require("./model/chat")
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors())
 
 app.use(express.static(path.join(__dirname, 'public')))
 io.on("connection", async (socket) => {
@@ -64,30 +66,30 @@ app.post('/user', async (req, res, next) => {
 
 
 app.get("/users", async (req, res) => {
-	try{
-		let userData = await userModel.find().sort({user_name: 1})
-		if(userData.length >0){
-			res.status(200).json({messaeg:"success", data: userData})
-		}else{
-			res.status(404).json({message:"no data found"})
+	try {
+		let userData = await userModel.find().sort({ user_name: 1 })
+		if (userData.length > 0) {
+			res.status(200).json({ messaeg: "success", data: userData })
+		} else {
+			res.status(404).json({ message: "no data found" })
 		}
-	}catch(err){
-		res.status(500).json({message:"internal server Error", error: err?.message})
+	} catch (err) {
+		res.status(500).json({ message: "internal server Error", error: err?.message })
 	}
 })
 
 app.get("/history", async (req, res) => {
-	try{
+	try {
 		const senderId = req.query.senderId
 		const receiverId = req.query.receiverId
-		let historyData = await chatModel.find({$or: [{senderId: senderId, receiverId: receiverId}, {senderId: receiverId, receiverId: senderId}]}).sort({createdAt: 1})
-		if(historyData.length > 0){
-			res.status(200).json({data: historyData})
-		}else{
-			res.status(404).json({message: "no history data found"})
+		let historyData = await chatModel.find({ $or: [{ senderId: senderId, receiverId: receiverId }, { senderId: receiverId, receiverId: senderId }] }).sort({ createdAt: 1 })
+		if (historyData.length > 0) {
+			res.status(200).json({ data: historyData })
+		} else {
+			res.status(404).json({ message: "no history data found" })
 		}
-	}catch(err){
-		res.status(500).json({message:"Internal Server Error", error: err?.messsage})
+	} catch (err) {
+		res.status(500).json({ message: "Internal Server Error", error: err?.messsage })
 	}
 
 })
