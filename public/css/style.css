@@ -82,7 +82,7 @@ a {
 }
 
 .chat-sidebar ul li {
-  padding: 10px 0;
+  padding: 10px 10px;
 }
 
 .chat-messages {
@@ -155,6 +155,7 @@ a {
   margin-bottom: 20px;
 }
 
+
 .join-main label {
   display: block;
   margin-bottom: 5px;
@@ -167,10 +168,10 @@ a {
   width: 100%;
 }
 .user:hover {
-  background-color: green;
+  background-color: #667aff;
 }
 .active {
-  background-color: green;
+  background-color: #667aff;
 }
 .join-main select {
   font-size: 16px;
