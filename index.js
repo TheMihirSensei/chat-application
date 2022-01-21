@@ -4,6 +4,7 @@ const { createServer } = require("http");
 const socket = require("socket.io");
 const mongoose = require("mongoose")
 const cors = require("cors")
+require("dotenv").config()
 
 
 const app = express();
@@ -93,7 +94,6 @@ app.get("/history", async (req, res) => {
 	}
 
 })
-const port = 5012
 
 
 mongoose.connect("mongodb+srv://mihir:mihir@chat-cluster.cs3bs.mongodb.net/chatApp?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
@@ -101,6 +101,6 @@ mongoose.connect("mongodb+srv://mihir:mihir@chat-cluster.cs3bs.mongodb.net/chatA
 		console.log("issue is: ", err)
 	} else {
 		console.log("connected mongodb")
-		httpServer.listen(port, () => console.log("server runing"));
+		httpServer.listen(process.env.PORT || 5012, () => console.log("server runing"));
 	}
 })

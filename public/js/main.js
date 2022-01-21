@@ -87,6 +87,7 @@ const chatWithUser = (e) => {
 		})
 		.catch(err => {
 			console.log("come here error: ", err)
+			chatContainer.innerHTML = ""
 		})
 };
 
